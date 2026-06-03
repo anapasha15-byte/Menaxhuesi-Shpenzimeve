@@ -25,7 +25,7 @@ let transactions =
     )
   ) || [];
 
-// Shto transaksion
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -50,7 +50,7 @@ form.addEventListener("submit", (e) => {
   closeModal();
 });
 
-// Shfaq transaksionet
+
 function renderTransactions() {
   transactionList.innerHTML = "";
 
@@ -130,7 +130,7 @@ function renderTransactions() {
   );
 }
 
-// Fshi transaksion
+
 function deleteTransaction(id) {
 
   const confirmDelete = confirm(
@@ -149,7 +149,7 @@ function deleteTransaction(id) {
   renderTransactions();
 }
 
-// Edito transaksion
+
 function editTransaction(id) {
 
   const transaction =
@@ -186,19 +186,19 @@ function editTransaction(id) {
   renderTransactions();
 }
 
-// Hap modalin
+
 function openModal() {
   document.querySelector(".modal")
     .style.display = "block";
 }
 
-// Mbyll modalin
+
 function closeModal() {
   document.querySelector(".modal")
     .style.display = "none";
 }
 
-// Logout
+
 function logout() {
 
   localStorage.removeItem(
@@ -209,7 +209,7 @@ function logout() {
     "login.html";
 }
 
-// Dark Mode
+
 function toggleDarkMode() {
 
   document.body.classList.toggle(
@@ -233,7 +233,7 @@ if (
   );
 }
 
-// Emri i përdoruesit
+
 if (username) {
 
   document.getElementById(
@@ -259,5 +259,5 @@ function closeSettings(){
         "settingsModal"
     ).style.display = "none";
 }
-// Ngarko transaksionet
+
 renderTransactions();
