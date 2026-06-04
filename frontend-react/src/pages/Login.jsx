@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const login = async (e) => {
     e.preventDefault();
@@ -31,8 +33,8 @@ function Login() {
         );
 
         alert("Login me sukses ✅");
+navigate("/dashboard");
 
-        // më vonë do të shkojë te Dashboard
       } else {
         alert(data.message);
       }
