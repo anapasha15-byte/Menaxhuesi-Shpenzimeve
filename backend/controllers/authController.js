@@ -39,7 +39,6 @@ const register = async (req, res) => {
   }
 };
 
-// Login
 const login = async (req, res) => {
   try {
 
@@ -67,10 +66,11 @@ const login = async (req, res) => {
       });
     }
 
-    res.status(200).json({
-      message: "Login me sukses",
-      username: user.username,
-    });
+ res.status(200).json({
+  message: "Login me sukses",
+  username: user.username,
+  userId: user._id,
+});
 
   } catch (error) {
 

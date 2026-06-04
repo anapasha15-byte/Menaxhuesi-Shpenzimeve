@@ -6,70 +6,133 @@ function Dashboard() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("income");
+  const [category, setCategory] =
+  useState("💼 Rrogë");
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+const [darkMode, setDarkMode] =
+  useState(
+    localStorage.getItem("darkMode") === "true"
+  );
 
-  const fetchTransactions = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/transactions"
-      );
+useEffect(() => {
+  fetchTransactions();
+}, []);
 
-      const data = await response.json();
-      setTransactions(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+useEffect(() => {
+  localStorage.setItem(
+    "darkMode",
+    darkMode
+  );
+}, [darkMode]);
 
-  const addTransaction = async (e) => {
-    e.preventDefault();
+const fetchTransactions = async () => {
+  try {
+    const userId =
+      localStorage.getItem("userId");
 
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/transactions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title,
-            amount: Number(amount),
-            type,
-          }),
-        }
-      );
+    const response = await fetch(
+      `http://localhost:5000/api/transactions?userId=${userId}`
+    );
 
-      if (response.ok) {
-        setTitle("");
-        setAmount("");
-        setType("income");
-        fetchTransactions();
+    const data = await response.json();
+
+    setTransactions(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+ const addTransaction = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/transactions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          userId: localStorage.getItem(
+            "userId"
+          ),
+          title,
+          amount: Number(amount),
+          type,
+          category,
+        }),
       }
-    } catch (error) {
-      console.log(error);
+    );
+
+    if (response.ok) {
+      setTitle("");
+      setAmount("");
+      setType("income");
+      setCategory("💼 Rrogë");
+
+      fetchTransactions();
     }
-  };
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-  const deleteTransaction = async (id) => {
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/transactions/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (response.ok) {
-        fetchTransactions();
+ const deleteTransaction = async (id) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/transactions/${id}`,
+      {
+        method: "DELETE",
       }
-    } catch (error) {
-      console.log(error);
+    );
+
+    if (response.ok) {
+      fetchTransactions();
     }
-  };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const editTransaction = async (transaction) => {
+  const newTitle = prompt(
+    "Ndrysho titullin:",
+    transaction.title
+  );
+
+  if (!newTitle) return;
+
+  const newAmount = prompt(
+    "Ndrysho shumën:",
+    transaction.amount
+  );
+
+  if (!newAmount) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/transactions/${transaction._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          title: newTitle,
+          amount: Number(newAmount),
+        }),
+      }
+    );
+
+    if (response.ok) {
+      fetchTransactions();
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   const logout = () => {
     localStorage.removeItem("username");
@@ -87,27 +150,41 @@ function Dashboard() {
   const balance = income - expense;
 
   return (
-    <div className="container">
-      <div className="profile-header">
-        <div className="avatar">👤</div>
+  <div
+  className={`container ${
+    darkMode ? "dark-mode" : ""
+  }`}
+>
+     <div className="profile-header">
+  <div className="avatar">👤</div>
 
-        <div className="user-info">
-          <h2>
-            Përshëndetje,{" "}
-            {localStorage.getItem("username")}
-          </h2>
+  <div className="user-info">
+    <h2>
+      Përshëndetje,{" "}
+      {localStorage.getItem("username")}
+    </h2>
 
-          <p>Menaxho financat e tua</p>
-        </div>
+    <p>Menaxho financat e tua</p>
+  </div>
 
-        <button
-          className="logout-btn"
-          onClick={logout}
-        >
-          🚪 Logout
-        </button>
-      </div>
+  <button
+    className="logout-btn"
+    onClick={() =>
+      setDarkMode(!darkMode)
+    }
+  >
+    {darkMode
+      ? "☀️ Light"
+      : "🌙 Dark"}
+  </button>
 
+  <button
+    className="logout-btn"
+    onClick={logout}
+  >
+    🚪 Logout
+  </button>
+</div>
       <div className="balance-card">
         <div>💳 Bilanci Aktual</div>
 
@@ -164,6 +241,36 @@ function Dashboard() {
               📉 Shpenzim
             </option>
           </select>
+          <select
+  value={category}
+  onChange={(e) =>
+    setCategory(e.target.value)
+  }
+>
+  <option value="💼 Rrogë">
+    💼 Rrogë
+  </option>
+
+  <option value="🍔 Ushqim">
+    🍔 Ushqim
+  </option>
+
+  <option value="🚕 Transport">
+    🚕 Transport
+  </option>
+
+  <option value="🏠 Qira">
+    🏠 Qira
+  </option>
+
+  <option value="🎉 Argëtim">
+    🎉 Argëtim
+  </option>
+
+  <option value="💡 Fatura">
+    💡 Fatura
+  </option>
+</select>
 
           <button type="submit">
             ➕ Shto Transaksion
@@ -172,39 +279,54 @@ function Dashboard() {
       </div>
 
       <div className="transactions">
-        <h2>📋 Lista e Transaksioneve</h2>
+  <h2>📋 Lista e Transaksioneve</h2>
 
-        <ul id="transactionList">
-          {transactions.map((t) => (
-            <li
-              key={t._id}
-              className={
-                t.type === "income"
-                  ? "income-item"
-                  : "expense-item"
-              }
-            >
-              <div>
-                <strong>{t.title}</strong>
-                <br />
-                {t.amount} €
-                <br />
-                {t.type}
-              </div>
+  <ul id="transactionList">
+    {transactions.map((t) => (
+      <li
+        key={t._id}
+        className={
+          t.type === "income"
+            ? "income-item"
+            : "expense-item"
+        }
+      >
+        <div>
+          <strong>{t.category}</strong>
 
-              <button
-                onClick={() =>
-                  deleteTransaction(t._id)
-                }
-              >
-                🗑️
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+          <br />
+
+          {t.title}
+
+          <br />
+
+          {t.amount} €
+        </div>
+
+        <div>
+          <button
+            onClick={() =>
+              editTransaction(t)
+            }
+          >
+            ✏️
+          </button>
+
+          <button
+            onClick={() =>
+              deleteTransaction(t._id)
+            }
+          >
+            🗑️
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+</div>
     </div>
   );
 }
 
 export default Dashboard;
+

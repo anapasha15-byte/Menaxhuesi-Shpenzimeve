@@ -1,13 +1,19 @@
 const Transaction = require("../models/Transaction");
 
-// Merr te gjitha transaksionet
 const getTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find().sort({
-      createdAt: -1,
-    });
+    const { userId } = req.query;
 
-    res.status(200).json(transactions);
+    const transactions =
+      await Transaction.find({
+        user: userId,
+      }).sort({
+        createdAt: -1,
+      });
+
+    res.status(200).json(
+      transactions
+    );
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -15,18 +21,32 @@ const getTransactions = async (req, res) => {
   }
 };
 
-// Krijo nje transaksion te ri
-const createTransaction = async (req, res) => {
-  try {
-    const { title, amount, type } = req.body;
 
-    const transaction = await Transaction.create({
+const createTransaction = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      userId,
       title,
       amount,
       type,
-    });
+      category,
+    } = req.body;
 
-    res.status(201).json(transaction);
+    const transaction =
+      await Transaction.create({
+        user: userId,
+        title,
+        amount,
+        type,
+        category,
+      });
+
+    res.status(201).json(
+      transaction
+    );
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -34,12 +54,12 @@ const createTransaction = async (req, res) => {
   }
 };
 
-// Fshi transaksion
 const deleteTransaction = async (req, res) => {
   try {
-    const transaction = await Transaction.findByIdAndDelete(
-      req.params.id
-    );
+    const transaction =
+      await Transaction.findByIdAndDelete(
+        req.params.id
+      );
 
     if (!transaction) {
       return res.status(404).json({

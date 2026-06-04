@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   const register = async (e) => {
@@ -27,11 +28,11 @@ function Register() {
       const data = await response.json();
 
       if (response.ok) {
-  alert(
-    "Llogaria u krijua me sukses ✅"
-  );
-  navigate("/login");
+        alert(
+          "Llogaria u krijua me sukses ✅"
+        );
 
+        navigate("/login");
       } else {
         alert(data.message);
       }
@@ -128,7 +129,10 @@ function Register() {
             marginTop: "15px",
           }}
         >
-          Ke llogari? Hyr
+          Ke llogari?{" "}
+          <Link to="/login">
+            Hyr
+          </Link>
         </div>
       </div>
     </div>

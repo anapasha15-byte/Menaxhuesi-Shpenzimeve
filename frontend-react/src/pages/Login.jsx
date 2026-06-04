@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   const login = async (e) => {
@@ -25,15 +26,20 @@ function Login() {
       );
 
       const data = await response.json();
+if (response.ok) {
+  localStorage.setItem(
+    "username",
+    data.username
+  );
 
-      if (response.ok) {
-        localStorage.setItem(
-          "username",
-          data.username
-        );
+  localStorage.setItem(
+    "userId",
+    data.userId
+  );
+  console.log("USER ID:", data.userId);
 
-        alert("Login me sukses ✅");
-navigate("/dashboard");
+  navigate("/dashboard");
+
 
       } else {
         alert(data.message);
@@ -129,7 +135,10 @@ navigate("/dashboard");
             marginTop: "15px",
           }}
         >
-          Nuk ke llogari? Regjistrohu
+          Nuk ke llogari?{" "}
+          <Link to="/register">
+            Regjistrohu
+          </Link>
         </div>
       </div>
     </div>
